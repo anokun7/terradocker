@@ -6,6 +6,7 @@ resource "aws_instance" "ucp-mgr" {
   count         = "${var.no_of_mgrs}"
   ami           = "ami-26ebbc5c"
   instance_type = "t2.micro"
+  key_name      = "${var.key_name}"
   tags {
     Name = "noop-mgr-${count.index+1}"
   }
@@ -15,6 +16,7 @@ resource "aws_instance" "dtr" {
   count         = "${var.no_of_dtrs}"
   ami           = "ami-26ebbc5c"
   instance_type = "t2.micro"
+  key_name      = "noop-win"
   tags {
     Name = "noop-dtr-${count.index+1}"
   }

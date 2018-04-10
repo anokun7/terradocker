@@ -7,3 +7,6 @@ variable no_of_dtrs {
 variable region {
   default = "us-east-1"
 }
+variable key_name { 
+  default = "noop-win" 
+}
