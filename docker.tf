@@ -62,6 +62,14 @@ resource "aws_instance" "dtr" {
         EOF
 }
 
+resource "null_resource" "ssh-configs" {
+  count = 3
+
+  provisioner "local-exec" {
+    command = "echo ${element(aws_instance.dtr.*.public_ip, count.index+1)} >> ssh.txt"
+  }
+}
+
 output "ucp_ip" {
   value = "${aws_instance.ucp-mgr.*.public_ip}"
 }
