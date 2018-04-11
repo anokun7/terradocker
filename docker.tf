@@ -60,6 +60,10 @@ resource "aws_instance" "dtr" {
         systemctl enable docker
         usermod -aG docker ec2-user
         EOF
+
+  provisioner "local-exec" {
+    command = "echo ${self.public_ip} >> ssh-dtr.txt"
+  }
 }
 
 resource "null_resource" "ssh-configs" {
