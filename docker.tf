@@ -26,6 +26,9 @@ resource "aws_instance" "ucp-mgr" {
         yum-config-manager --add-repo https://storebits.docker.com/ee/m/sub-0c8da95e-0837-42c0-a63f-6d57b5ee2f2a/rhel/docker-ee.repo
         yum makecache fast
         yum install --enablerepo=docker-ee-test-2.0 docker-ee -y
+        systemctl start docker
+        systemctl enable docker
+        usermod -aG docker ec2-user
         EOF
 }
 
@@ -53,6 +56,9 @@ resource "aws_instance" "dtr" {
         yum-config-manager --add-repo https://storebits.docker.com/ee/m/sub-0c8da95e-0837-42c0-a63f-6d57b5ee2f2a/rhel/docker-ee.repo
         yum makecache fast
         yum install --enablerepo=docker-ee-test-2.0 docker-ee -y
+        systemctl start docker
+        systemctl enable docker
+        usermod -aG docker ec2-user
         EOF
 }
 
