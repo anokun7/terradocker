@@ -5,7 +5,7 @@ provider "aws" {
 resource "aws_instance" "ucp-mgr" {
   count         = "${var.no_of_mgrs}"
   ami           = "ami-26ebbc5c"
-  instance_type = "t2.micro"
+  instance_type = "t2.large"
   key_name      = "${var.key_name}"
 
   tags {
@@ -25,17 +25,21 @@ resource "aws_instance" "ucp-mgr" {
         yum-config-manager --enable rhui-REGION-rhel-server-extras
         yum-config-manager --add-repo https://storebits.docker.com/ee/m/sub-0c8da95e-0837-42c0-a63f-6d57b5ee2f2a/rhel/docker-ee.repo
         yum makecache fast
-        yum install --enablerepo=docker-ee-test-2.0 docker-ee -y
+        yum install docker-ee -y
         systemctl start docker
         systemctl enable docker
         usermod -aG docker ec2-user
         EOF
+
+  provisioner "local-exec" {
+    command = "echo ${self.public_ip} >> ssh-ucp.txt"
+  }
 }
 
 resource "aws_instance" "dtr" {
   count         = "${var.no_of_dtrs}"
   ami           = "ami-26ebbc5c"
-  instance_type = "t2.micro"
+  instance_type = "t2.large"
   key_name      = "noop-win"
 
   tags {
@@ -55,7 +59,7 @@ resource "aws_instance" "dtr" {
         yum-config-manager --enable rhui-REGION-rhel-server-extras
         yum-config-manager --add-repo https://storebits.docker.com/ee/m/sub-0c8da95e-0837-42c0-a63f-6d57b5ee2f2a/rhel/docker-ee.repo
         yum makecache fast
-        yum install --enablerepo=docker-ee-test-2.0 docker-ee -y
+        yum install docker-ee -y
         systemctl start docker
         systemctl enable docker
         usermod -aG docker ec2-user
