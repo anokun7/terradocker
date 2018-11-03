@@ -13,3 +13,7 @@ variable region {
 variable key_name {
   default = "noop-win"
 }
+
+variable image_ami {
+  default = "ami-0ac019f4fcb7cb7e6"
+}

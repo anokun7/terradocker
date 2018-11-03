@@ -4,7 +4,7 @@ provider "aws" {
 
 resource "aws_instance" "ucp-mgr" {
   count         = "${var.no_of_mgrs}"
-  ami           = "ami-26ebbc5c"
+  ami           = "${var.image_ami}"
   instance_type = "t2.large"
   key_name      = "${var.key_name}"
 
@@ -17,19 +17,18 @@ resource "aws_instance" "ucp-mgr" {
 
   user_data = <<-EOF
         #!/bin/bash
-        sh -c 'echo "https://storebits.docker.com/ee/m/sub-0c8da95e-0837-42c0-a63f-6d57b5ee2f2a/rhel" > /etc/yum/vars/dockerurl'
-        sh -c 'echo "7" > /etc/yum/vars/dockerosversion'
-        yum install -y yum-utils device-mapper-persistent-data lvm2
-        yum-config-manager --enable docker-ee-stable-17.06
-        yum-config-manager --enable rhel-7-server-extras-rpms
-        yum-config-manager --enable rhui-REGION-rhel-server-extras
-        yum-config-manager --add-repo https://storebits.docker.com/ee/m/sub-0c8da95e-0837-42c0-a63f-6d57b5ee2f2a/rhel/docker-ee.repo
-        yum makecache fast
-        yum install docker-ee -y
-        systemctl start docker
+        apt update
+        apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        apt-key fingerprint 0EBFCD88
+        add-apt-repository  "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) Stable test"
+        apt update
+        apt-cache madison docker-ce
+        apt-get install docker-ce -y
         systemctl enable docker
-        usermod -aG docker ec2-user
+        usermod -aG docker ubuntu
         EOF
+
 
   provisioner "local-exec" {
     command = "echo ${self.public_ip} >> ssh-ucp.txt"
@@ -38,7 +37,7 @@ resource "aws_instance" "ucp-mgr" {
 
 resource "aws_instance" "dtr" {
   count         = "${var.no_of_dtrs}"
-  ami           = "ami-26ebbc5c"
+  ami           = "${var.image_ami}"
   instance_type = "t2.large"
   key_name      = "noop-win"
 
@@ -51,18 +50,16 @@ resource "aws_instance" "dtr" {
 
   user_data = <<-EOF
         #!/bin/bash
-        sh -c 'echo "https://storebits.docker.com/ee/m/sub-0c8da95e-0837-42c0-a63f-6d57b5ee2f2a/rhel" > /etc/yum/vars/dockerurl'
-        sh -c 'echo "7" > /etc/yum/vars/dockerosversion'
-        yum install -y yum-utils device-mapper-persistent-data lvm2
-        yum-config-manager --enable docker-ee-stable-17.06
-        yum-config-manager --enable rhel-7-server-extras-rpms
-        yum-config-manager --enable rhui-REGION-rhel-server-extras
-        yum-config-manager --add-repo https://storebits.docker.com/ee/m/sub-0c8da95e-0837-42c0-a63f-6d57b5ee2f2a/rhel/docker-ee.repo
-        yum makecache fast
-        yum install docker-ee -y
-        systemctl start docker
+        apt update
+        apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        apt-key fingerprint 0EBFCD88
+        add-apt-repository  "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) Stable test"
+        apt update
+        apt-cache madison docker-ce docker-ce
+        apt-get install docker-ce -y
         systemctl enable docker
-        usermod -aG docker ec2-user
+        usermod -aG docker ubuntu
         EOF
 
   provisioner "local-exec" {
