@@ -17,16 +17,18 @@ resource "aws_instance" "ucp-mgr" {
 
   user_data = <<-EOF
         #!/bin/bash
+        export DOCKER_EE_URL=https://s3-us-west-2.amazonaws.com/internal-docker-ee-builds/docker-ee-linux
+        export DOCKER_EE_VERSION=test
+        curl -fsSL "$${DOCKER_EE_URL}/ubuntu/gpg" | sudo apt-key add -
+        apt-key fingerprint 6D085F96
+        add-apt-repository \
+           "deb [arch=amd64] $${DOCKER_EE_URL}/ubuntu \
+           $(lsb_release -cs) \
+           $${DOCKER_EE_VERSION}"
         apt update
-        apt-get install -y apt-transport-https ca-certificates curl software-properties-common
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-        apt-key fingerprint 0EBFCD88
-        add-apt-repository  "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) Stable test"
-        apt update
-        apt-cache madison docker-ce
-        apt-get install docker-ce -y
-        systemctl enable docker
+        apt install docker-ee -y
         usermod -aG docker ubuntu
+        systemctl enable docker
         EOF
 
 
@@ -50,21 +52,23 @@ resource "aws_instance" "dtr" {
 
   user_data = <<-EOF
         #!/bin/bash
+        export DOCKER_EE_URL=https://s3-us-west-2.amazonaws.com/internal-docker-ee-builds/docker-ee-linux
+        export DOCKER_EE_VERSION=test
+        curl -fsSL "$${DOCKER_EE_URL}/ubuntu/gpg" | sudo apt-key add -
+        apt-key fingerprint 6D085F96
+        add-apt-repository \
+                   "deb [arch=amd64] $${DOCKER_EE_URL}/ubuntu \
+                    $(lsb_release -cs) \
+                    $${DOCKER_EE_VERSION}"
         apt update
-        apt-get install -y apt-transport-https ca-certificates curl software-properties-common
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-        apt-key fingerprint 0EBFCD88
-        add-apt-repository  "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) Stable test"
-        apt update
-        apt-cache madison docker-ce docker-ce
-        apt-get install docker-ce -y
-        systemctl enable docker
+        apt install docker-ee -y
         usermod -aG docker ubuntu
+        systemctl enable docker
         EOF
 
-  provisioner "local-exec" {
-    command = "echo ${self.public_ip} >> ssh-dtr.txt"
-  }
+# provisioner "local-exec" {
+#   command = "echo ${self.public_ip} >> ssh-dtr.txt"
+# }
 }
 
 resource "null_resource" "ssh-configs" {
