@@ -4,3 +4,7 @@
 # .tfstate files
 *.tfstate
 *.tfstate.*
+
+# ssh files
+ssh.*
+ssh-*
