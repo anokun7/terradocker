@@ -17,8 +17,8 @@ resource "aws_instance" "ucp-mgr" {
 
   user_data = <<-EOF
         #!/bin/bash
-        export DOCKER_EE_URL=https://s3-us-west-2.amazonaws.com/internal-docker-ee-builds/docker-ee-linux
-        export DOCKER_EE_VERSION=test
+        export DOCKER_EE_URL=https://storebits.docker.com/ee/ubuntu/sub-b79ff735-47b5-4500-bfff-9c223001aad4
+        export DOCKER_EE_VERSION=stable-18.09
         curl -fsSL "$${DOCKER_EE_URL}/ubuntu/gpg" | sudo apt-key add -
         apt-key fingerprint 6D085F96
         add-apt-repository \
@@ -52,14 +52,14 @@ resource "aws_instance" "dtr" {
 
   user_data = <<-EOF
         #!/bin/bash
-        export DOCKER_EE_URL=https://s3-us-west-2.amazonaws.com/internal-docker-ee-builds/docker-ee-linux
-        export DOCKER_EE_VERSION=test
+        export DOCKER_EE_URL=https://storebits.docker.com/ee/ubuntu/sub-b79ff735-47b5-4500-bfff-9c223001aad4
+        export DOCKER_EE_VERSION=stable-18.09
         curl -fsSL "$${DOCKER_EE_URL}/ubuntu/gpg" | sudo apt-key add -
         apt-key fingerprint 6D085F96
         add-apt-repository \
-                   "deb [arch=amd64] $${DOCKER_EE_URL}/ubuntu \
-                    $(lsb_release -cs) \
-                    $${DOCKER_EE_VERSION}"
+              "deb [arch=amd64] $${DOCKER_EE_URL}/ubuntu \
+               $(lsb_release -cs) \
+               $${DOCKER_EE_VERSION}"
         apt update
         apt install docker-ee -y
         usermod -aG docker ubuntu
