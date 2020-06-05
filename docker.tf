@@ -54,11 +54,11 @@ resource "aws_instance" "dtr" {
   user_data = <<-EOF
         #!/bin/bash
         export DOCKER_EE_URL="https://storebits.docker.com/ee/ubuntu/sub-9368f4c1-b69e-4fff-af40-f8fdff1194ad"
-        export DOCKER_EE_VERSION=stable-19.03
+        export DOCKER_EE_VERSION=19.03
         curl -fsSL "$DOCKER_EE_URL/ubuntu/gpg" | sudo apt-key add -
         apt-key fingerprint 6D085F96
         add-apt-repository \
-           "deb [arch=$$(dpkg --print-architecture)] $DOCKER_EE_URL/ubuntu \
+           "deb [arch=$(dpkg --print-architecture)] $DOCKER_EE_URL/ubuntu \
            $(lsb_release -cs) \
            stable-$DOCKER_EE_VERSION"
         apt update
