@@ -17,6 +17,16 @@ resource "aws_instance" "ucp-mgr" {
 
   user_data = <<-EOF
         #!/bin/bash
+        mkdir /etc/docker
+        cat <<-EOT > /etc/docker/daemon.json
+        {
+        "log-driver": "json-file",
+        "log-opts": {
+            "max-size": "10m",
+            "max-file": "3"
+            }
+        }
+        EOT
         export DOCKER_EE_URL="https://storebits.docker.com/ee/ubuntu/sub-9368f4c1-b69e-4fff-af40-f8fdff1194ad"
         export DOCKER_EE_VERSION=19.03
         curl -fsSL "$DOCKER_EE_URL/ubuntu/gpg" | sudo apt-key add -
@@ -53,6 +63,16 @@ resource "aws_instance" "dtr" {
 
   user_data = <<-EOF
         #!/bin/bash
+        mkdir /etc/docker
+        cat <<-EOT > /etc/docker/daemon.json
+        {
+        "log-driver": "json-file",
+        "log-opts": {
+            "max-size": "10m",
+            "max-file": "3"
+            }
+        }
+        EOT
         export DOCKER_EE_URL="https://storebits.docker.com/ee/ubuntu/sub-9368f4c1-b69e-4fff-af40-f8fdff1194ad"
         export DOCKER_EE_VERSION=19.03
         curl -fsSL "$DOCKER_EE_URL/ubuntu/gpg" | sudo apt-key add -
